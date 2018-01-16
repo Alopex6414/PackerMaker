@@ -470,8 +470,8 @@ void CConfigDlg::OnBnClickedButtonConfigCancel()
 	// TODO:  在此添加控件通知处理程序代码
 
 	// 关于CheckBox
-	((CButton*)GetDlgItem(IDC_RADIO_CONFIG_PACKERORIGIN))->SetCheck(FALSE);
-	((CButton*)GetDlgItem(IDC_RADIO_CONFIG_PACKERCRYPTFILE))->SetCheck(TRUE);
+	((CButton*)GetDlgItem(IDC_RADIO_CONFIG_PACKERORIGIN))->SetCheck(TRUE);
+	((CButton*)GetDlgItem(IDC_RADIO_CONFIG_PACKERCRYPTFILE))->SetCheck(FALSE);
 
 	// 关于Edit
 	m_edtLucky1.LimitText(2);

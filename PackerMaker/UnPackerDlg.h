@@ -2,6 +2,8 @@
 #include "afxwin.h"
 #include "afxcmn.h"
 
+#include "PlumThread.h"
+#include "UnPackerThread.h"
 
 // CUnPackerDlg ¶Ô»°¿ò
 
@@ -19,6 +21,9 @@ private:
 
 	CString m_csImport;
 	CString m_csExport;
+
+	CUnPackerThread m_UnPackerThread;
+	CPlumThread* m_pPlumUnPackerThread;
 
 public:
 	int m_nArray[16];

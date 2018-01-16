@@ -429,29 +429,21 @@ void CPackerDlg::OnBnClickedButtonPackerOk()
 		g_dwLuckyArr[i] = dwLuckyNumberArr[i];
 	}
 
-	CPlumPack* pPacker = new CPlumPack;
-	char** ppSrcArr = NULL;
-	char* pPackerArr = NULL;
 	int nSize;
 	int nLen;
 
 	nSize = m_vecFilePath.size();
-	ppSrcArr = (char**)malloc(nSize*sizeof(char*));
 	g_nSrcSize = m_vecFilePath.size();
 	g_ppSrcArr = (char**)malloc(nSize*sizeof(char*));
 	for (int i = 0; i < nSize; ++i)
 	{
 		nLen = WideCharToMultiByte(CP_ACP, 0, m_vecFilePath[i], -1, NULL, 0, NULL, NULL);
-		*(ppSrcArr + i) = (char*)malloc((nLen + 1)*sizeof(char));
 		*(g_ppSrcArr + i) = (char*)malloc((nLen + 1)*sizeof(char));
-		WideCharToMultiByte(CP_ACP, 0, m_vecFilePath[i], -1, *(ppSrcArr + i), nLen, NULL, NULL);
 		WideCharToMultiByte(CP_ACP, 0, m_vecFilePath[i], -1, *(g_ppSrcArr + i), nLen, NULL, NULL);
 	}
 
 	nLen = WideCharToMultiByte(CP_ACP, 0, m_csExport, -1, NULL, 0, NULL, NULL);
-	pPackerArr = (char*)malloc((nLen + 1)*sizeof(char));
 	g_pDestArr = (char*)malloc((nLen + 1)*sizeof(char));
-	WideCharToMultiByte(CP_ACP, 0, m_csExport, -1, pPackerArr, nLen, NULL, NULL);
 	WideCharToMultiByte(CP_ACP, 0, m_csExport, -1, g_pDestArr, nLen, NULL, NULL);
 
 	if (m_pPlumPackerThread)
@@ -460,17 +452,12 @@ void CPackerDlg::OnBnClickedButtonPackerOk()
 		delete m_pPlumPackerThread;
 		m_pPlumPackerThread = NULL;
 	}
+
+	g_nPackerCheck = m_nCheck;
+
 	m_pPlumPackerThread = new CPlumThread(&m_PackerThread);
 	m_pPlumPackerThread->PlumThreadInit();
 
-	free(pPackerArr);
-	for (int i = 0; i < nSize; ++i)
-	{
-		free(*(ppSrcArr + i));
-	}
-	free(ppSrcArr);
-
-	delete pPacker;
 }
 
 

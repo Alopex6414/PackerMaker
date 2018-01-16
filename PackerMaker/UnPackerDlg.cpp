@@ -6,7 +6,6 @@
 #include "UnPackerDlg.h"
 #include "afxdialogex.h"
 
-
 // CUnPackerDlg 对话框
 
 IMPLEMENT_DYNAMIC(CUnPackerDlg, CDialogEx)
@@ -19,6 +18,12 @@ CUnPackerDlg::CUnPackerDlg(CWnd* pParent /*=NULL*/)
 
 CUnPackerDlg::~CUnPackerDlg()
 {
+	if (m_pPlumUnPackerThread)
+	{
+		m_pPlumUnPackerThread->PlumThreadExit();
+		delete m_pPlumUnPackerThread;
+		m_pPlumUnPackerThread = NULL;
+	}
 }
 
 void CUnPackerDlg::DoDataExchange(CDataExchange* pDX)
@@ -90,6 +95,8 @@ void CUnPackerDlg::ConstructionExtra()
 
 	m_nCheck = 0;
 	memset(m_nArray, 0, 16);
+
+	m_pPlumUnPackerThread = NULL;
 
 	m_nArray[0] = 170;
 	m_nArray[1] = 187;
@@ -229,7 +236,7 @@ void CUnPackerDlg::InitWindowLayOut()
 void CUnPackerDlg::InitWindowItemLayOut()
 {
 	// 关于Status
-	m_sticConvertMark.ShowWindow(SW_HIDE);
+	m_sticConvertMark.SetWindowText(L"Ready!");
 
 	// 关于ProgressBar
 	m_gbxUnPackerProgress.ShowWindow(SW_HIDE);
@@ -380,15 +387,92 @@ void CUnPackerDlg::OnBnClickedButtonUnpackerCancel()
 void CUnPackerDlg::OnBnClickedButtonUnpackerOk()
 {
 	// TODO:  在此添加控件通知处理程序代码
+	CString csOriginFilePath;
+	CString csUnPackerFilePath;
+
+	m_edtOriginFilePath.GetWindowText(csOriginFilePath);
+	m_edtUnPackerFilePath.GetWindowText(csUnPackerFilePath);
+
+	if (csOriginFilePath == L"")
+	{
+		MessageBox(L"Please Select Import File Path!", L"Warning", MB_OK | MB_ICONWARNING);
+		return;
+	}
+
+	if (csUnPackerFilePath == L"")
+	{
+		MessageBox(L"Please Select Export File Path!", L"Warning", MB_OK | MB_ICONWARNING);
+		return;
+	}
+
+	csUnPackerFilePath = csUnPackerFilePath + L"\\";
+
+	m_sticConvertMark.SetWindowText(L"Please Wait...");
+
+	m_gbxUnPackerProgress.ShowWindow(SW_SHOW);
+	m_sticUnPackerProgressTip.ShowWindow(SW_SHOW);
+	m_sticUnPackerState.ShowWindow(SW_SHOW);
+	m_prgUnPacker.ShowWindow(SW_SHOW);
+
+	int nLen;
+
+	nLen = WideCharToMultiByte(CP_ACP, 0, csOriginFilePath, -1, NULL, 0, NULL, NULL);
+	g_pUnPackSrcArr = (char*)malloc((nLen + 1)*sizeof(char));
+	WideCharToMultiByte(CP_ACP, 0, csOriginFilePath, -1, g_pUnPackSrcArr, nLen, NULL, NULL);
+
+	nLen = WideCharToMultiByte(CP_ACP, 0, csUnPackerFilePath, -1, NULL, 0, NULL, NULL);
+	g_pUnPackDestArr = (char*)malloc((nLen + 1)*sizeof(char));
+	WideCharToMultiByte(CP_ACP, 0, csUnPackerFilePath, -1, g_pUnPackDestArr, nLen, NULL, NULL);
+
+	if (m_pPlumUnPackerThread)
+	{
+		m_pPlumUnPackerThread->PlumThreadExit();
+		delete m_pPlumUnPackerThread;
+		m_pPlumUnPackerThread = NULL;
+	}
+
+	m_pPlumUnPackerThread = new CPlumThread(&m_UnPackerThread);
+	m_pPlumUnPackerThread->PlumThreadInit();
+
+	KillTimer(1);
+	SetTimer(1, 10, NULL);
+
+	KillTimer(0);
+	SetTimer(0, 100, NULL);
 }
 
 // CUnPackerDlg ~定时器
 void CUnPackerDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	CString csConvertCount;
+	CString csAllCount;
+
 	switch (nIDEvent)
 	{
 	case 0:
+		csConvertCount.Format(L"%d", g_nUnPackCount);
+		csAllCount.Format(L"%d", g_nUnPackSize);
+
+		m_prgUnPacker.SetPos(g_nUnPackCount);
+		m_sticUnPackerState.SetWindowText(csConvertCount + L" Completed, " + csAllCount + L" In Total.");
+		if (g_nUnPackCount == g_nUnPackSize)
+		{
+			m_sticUnPackerState.SetWindowText(L"Finish!");
+			m_btnOk.EnableWindow(TRUE);
+			KillTimer(0);
+		}
+
+		break;
+	case 1:
+		if (g_nUnPackSize != 0)
+		{
+			m_prgUnPacker.SetRange(0, g_nUnPackSize);
+			m_prgUnPacker.SetStep(1);
+			m_prgUnPacker.SetPos(0);
+			m_btnOk.EnableWindow(FALSE);
+			KillTimer(1);
+		}
 		break;
 	default:
 		break;

@@ -63,8 +63,9 @@ public:
 	virtual void PlumUnPackFileA(const char* pSrc);
 
 	//AES Packer(PackerMaker)
+	virtual void PlumPackFilePackerA(const char* pSrcArr[], int nArrSize, const char* pDest, int* pCount);
 	virtual void PlumPackFilePackerA(const char* pSrcArr[], int nArrSize, const char* pDest, DWORD* pLuckyArr, int* pCount);
-	virtual void PlumUnPackFilePackerA(const char* pSrc, const char* pDest, int* pCount);
+	virtual void PlumUnPackFilePackerA(const char* pSrc, const char* pDest, int* pSize, int* pCount);
 };
 
 #endif

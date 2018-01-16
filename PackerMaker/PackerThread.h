@@ -17,3 +17,4 @@ extern int g_nSrcSize;
 extern DWORD g_dwLuckyArr[4];
 
 extern int g_nPackerCount;
+extern int g_nPackerCheck;

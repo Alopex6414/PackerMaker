@@ -10,3 +10,7 @@ public:
 	virtual void WINAPI PlumThreadRun();
 };
 
+extern char* g_pUnPackSrcArr;
+extern char* g_pUnPackDestArr;
+extern int g_nUnPackSize;
+extern int g_nUnPackCount;

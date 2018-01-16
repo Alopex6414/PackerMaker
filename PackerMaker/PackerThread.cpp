@@ -10,6 +10,8 @@ DWORD g_dwLuckyArr[4] = { 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
 
 int g_nPackerCount = 0;
 
+int g_nPackerCheck = 0;
+
 CPackerThread::CPackerThread()
 {
 }
@@ -27,7 +29,14 @@ void WINAPI CPackerThread::PlumThreadRun()
 
 	g_nPackerCount = 0;
 
-	pPacker->PlumPackFilePackerA((const char**)g_ppSrcArr, g_nSrcSize, (const char*)g_pDestArr, g_dwLuckyArr, &g_nPackerCount);
+	if (g_nPackerCheck == 0)
+	{
+		pPacker->PlumPackFilePackerA((const char**)g_ppSrcArr, g_nSrcSize, (const char*)g_pDestArr, g_dwLuckyArr, &g_nPackerCount);
+	}
+	else if (g_nPackerCheck == 1)
+	{
+		pPacker->PlumPackFilePackerA((const char**)g_ppSrcArr, g_nSrcSize, (const char*)g_pDestArr, &g_nPackerCount);
+	}
 
 	free(g_pDestArr);
 	g_pDestArr = NULL;
