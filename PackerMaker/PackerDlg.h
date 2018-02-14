@@ -30,6 +30,8 @@ private:
 	CString m_csPackerFileName;
 	CString m_csExport;
 
+	CBrush m_Brush;
+
 	CPackerThread m_PackerThread;
 	CPlumThread* m_pPlumPackerThread;
 
@@ -79,4 +81,5 @@ public:
 	afx_msg void OnBnClickedButtonPackerCancel();
 	afx_msg void OnBnClickedButtonPackerOk();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

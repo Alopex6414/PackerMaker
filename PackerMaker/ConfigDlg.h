@@ -16,6 +16,8 @@ public:
 private:
 	CRect m_cWindowRect;
 
+	CBrush m_Brush;
+
 public:
 	CString m_csArray[16];
 	CString m_csCheck;
@@ -86,4 +88,5 @@ public:
 	CButton m_btnSave;
 	afx_msg void OnBnClickedButtonConfigCancel();
 	afx_msg void OnBnClickedButtonConfigOk();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };
